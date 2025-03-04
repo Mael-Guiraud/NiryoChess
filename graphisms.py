@@ -14,9 +14,7 @@ def load_img_pieces():
 
 def select_stockfish_level():
     root = tk.Tk()
-    root.withdraw()  # Cache la fenêtre principale de Tkinter
-
-    levels = [1, 5, 10, 15, 20]
+    root.withdraw()  
     level = simpledialog.askinteger("Stockfish Level", "Choose level (1-20):", minvalue=1, maxvalue=20)
 
     return level if level is not None else 10  # Si l'utilisateur ferme, niveau par défaut = 10
@@ -25,6 +23,8 @@ def init_board():
     pygame.init()
     params.global_state["screen"] = pygame.display.set_mode((params.WIDTH, params.HEIGHT))
     pygame.display.set_caption("Chess against a robot")
+    icon = pygame.image.load("./.logo.png")
+    pygame.display.set_icon(icon)
     params.global_state["font"] = pygame.font.Font(None, 40)
     load_img_pieces()
 def draw_board(board, time_white, time_black):
@@ -95,5 +95,11 @@ def draw_board(board, time_white, time_black):
 
             screen.blit(w_surf, (20, board_size + 40))
             screen.blit(b_surf, (20, board_size + 90))
+    # Load and display the logo in the bottom-right corner
+    logo = pygame.image.load("./.logo.png")  
+    logo = pygame.transform.scale(logo, (80, 80)) 
+    logo_x = params.WIDTH - 90  # Position at bottom-right
+    logo_y = params.HEIGHT - 90
+    screen.blit(logo, (logo_x, logo_y))
 
     pygame.display.update()

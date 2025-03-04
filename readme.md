@@ -8,7 +8,7 @@
 - Python 3.x
 - A chessboard
 - Stockfish (chess engine)
-- **A Niryo Ned2 robotic arm**
+- **A Niryo robotic arm controllable with pyniryo in python**
 
 ### Installing Dependencies
 
@@ -64,6 +64,11 @@ python3 main.py
 
 ### Controls 🖱️🔚🎮
 - **To exit the game**, either close the window or terminate execution using `Ctrl + C` in the terminal.
+
+### Known issues 🐞🔍🔧
+- **Arm range issue:** The arm may not be able to reach the edge of the board in. If this occurs, use a smaller chessboard.
+- **Gripper open range:** The gripper could open too wide, causing pieces to fall. Adjust the gripper's opening range directly in the niryo files (`catkin_ws/install/release/share/niryo_robot_tools_commander/config/[YOUR_NED_VERSION]/nano tools_definition.yaml`). 
+
 
 ## Project Structure 🏗️📁📜
 
