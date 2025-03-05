@@ -180,13 +180,14 @@ if __name__ == "__main__":
                     x, y = event.pos
                     if y < params.BOARD_SIZE and x < params.BOARD_SIZE:
                         handle_human_move(board,x, y)
+                        graphisms.draw_board(board, params.global_state["time_white"], params.global_state["time_black"])
                         if params.global_state["turn"] == chess.WHITE and ( (not params.TIMERS) or params.global_state["time_white"] > 0):
                             play_best_move(board, engine)
         graphisms.draw_board(board, params.global_state["time_white"], params.global_state["time_black"])
-        if params.global_state["time_white"] <= 0:
+        if  params.TIMERS and params.global_state["time_white"] <= 0:
             print("Time is up ! Human (black) wins.")
             running = False
-        elif params.global_state["time_black"] <= 0:
+        elif params.TIMERS and params.global_state["time_black"] <= 0:
             print("Time is up ! Stockfish (white) wins.")
             running = False
 
