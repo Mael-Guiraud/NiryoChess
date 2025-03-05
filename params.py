@@ -1,3 +1,8 @@
+import os
+
+# Get the absolute path of the directory where the script is located
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 #Robot IP on your network
 robot_ip = "192.168.0.101"
 
@@ -20,7 +25,7 @@ TIME_BLACK = 600
 STOCKFISH_PATH = "/usr/games/stockfish"
 
 #path of the pieces images
-PIECE_PATH = "./pieces_png"
+PIECE_PATH = logo_path = os.path.join(SCRIPT_DIR,"pieces_png")
 
 
 

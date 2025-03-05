@@ -23,7 +23,7 @@ def init_board():
     pygame.init()
     params.global_state["screen"] = pygame.display.set_mode((params.WIDTH, params.HEIGHT))
     pygame.display.set_caption("Chess against a robot")
-    icon = pygame.image.load("./.logo.png")
+    icon = pygame.image.load(os.path.join(params.SCRIPT_DIR, ".logo.png"))
     pygame.display.set_icon(icon)
     params.global_state["font"] = pygame.font.Font(None, 40)
     load_img_pieces()
@@ -96,7 +96,7 @@ def draw_board(board, time_white, time_black):
             screen.blit(w_surf, (20, board_size + 40))
             screen.blit(b_surf, (20, board_size + 90))
     # Load and display the logo in the bottom-right corner
-    logo = pygame.image.load("./.logo.png")  
+    logo = pygame.image.load(os.path.join(params.SCRIPT_DIR, ".logo.png"))  
     logo = pygame.transform.scale(logo, (80, 80)) 
     logo_x = params.WIDTH - 90  # Position at bottom-right
     logo_y = params.HEIGHT - 90

@@ -24,7 +24,7 @@ def configure_stockfish(level):
         config = {
             "Skill Level": level,  # Lower skill means more blunders
             "UCI_LimitStrength": True,  # Disabling Elo constraint to allow more errors
-            "UCI_Elo":1350,  # Between 1400 and 2500
+            "UCI_Elo":1350
         }
         params.global_state["Move Time"]= 0.1
     elif level <= 15:
@@ -32,6 +32,7 @@ def configure_stockfish(level):
         config = {
             "Skill Level": level,
             "UCI_LimitStrength": True,
+            "UCI_Elo":1350 + 50*level  
         }
         params.global_state["Move Time"]= 0.5
     else:
@@ -39,7 +40,7 @@ def configure_stockfish(level):
         config = {
             "Skill Level": level,
             "UCI_LimitStrength": False,  # Full power mode
-            "UCI_Elo": 3000,  # Grandmaster strength
+            "UCI_Elo": 3000  # Grandmaster strength
         }
         params.global_state["Move Time"]=3.0
 
