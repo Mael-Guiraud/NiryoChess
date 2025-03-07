@@ -36,19 +36,25 @@ sudo apt-get install python3-tk
     - Set `SIMULATED = 1` to run the simulation mode (without the robotic arm).
     - Set `TIMERS = 1` to enable time control for each player.
     - Modify `PIECE_PATH` to specify the directory containing chess piece images (default: "./pieces_png").
+    - Set `PROMOTION_RESERVE=1` if you have some reserve pieces in case of promotion (the positions of the pieces must be saved, following next step).
    
 
 3. **Calibrate and store key positions in the robotic arm’s memory** 📍⚙️🧠
    If you use the niryo arm, the following positional references must be pre-saved in the robotic system:
-     - `A1`: Bottom-left corner of the board.
-     - `H8`: Top-right corner of the board.
-     - `wait_white`: Standby position to optimize movement efficiency.
+     - `A1`: Bottom-left corner of the board, when the robot is facing the board. (If the player choose to play as white, the positions will automatically be adjusted). 
+     - `H8`: Top-right corner of the board, when the robot is facing the board.
+     - `wait_robot`: Standby position to optimize movement efficiency.
      - `dead_pieces`: Position to store captured pieces. (Usually outside the board, but close to the "a1" position is recommended).
-   - You can use the script `save_one_pos.py` to save a single position in the robotic arm's memory, ensuring you save the four positions mentioned above with the corresponding names.
+     - `promotQ`, `promotR`, `promotB`, `promotN`: Positions of reserve pieces for promotion, if you have some (otherwise, you can ignore this step and let `PROMOTION_RESERVE = 0` in `params.py`).
+
+
+    You can use the script `save_one_pos.py` to save a single position in the robotic arm's memory, ensuring you save the four positions mentioned above with the corresponding names.
 
 4. **Fix the chessboard in place** 📏♟️🔧
    - Any displacement post-calibration will disrupt movement precision. The chessboard must remain stationary throughout operation.
 
+5. **Optionnal: Save the sounds in the arm memory** 🎶🔊🧠
+   - If you want to use the sounds, you can save them in the robotic arm's memory. The sounds are in the `sounds` folder. We provide an english and a french version of the sounds. You must import them into the ned's memory using niryo studio. DO NOT CHANGE THE NAME OF THE FILES. You can then set the `SOUND_ON` parameter to `1` in the `params.py` file.
 ## Usage
 
 ### Launch the Game 🚀♞🎲
@@ -59,8 +65,9 @@ python3 main.py
 ```
 
 ### How It Works ⚡♟️🤖
-- **Stockfish (White) executes moves autonomously.** The robotic arm physically manipulates the chess pieces according to the computed strategy.
-- **The human player (Black) interacts via the graphical interface.** Use the mouse to select and move pieces.
+- **The game starts with the robotic arm in the standby position.** The player choose a difficulty level and side.
+- **Stockfish executes moves autonomously.** The robotic arm physically manipulates the chess pieces according to the computed strategy.
+- **The human player interacts via the graphical interface.** Use the mouse to select and move pieces.
 
 ### Controls 🖱️🔚🎮
 - **To exit the game**, either close the window or terminate execution using `Ctrl + C` in the terminal.

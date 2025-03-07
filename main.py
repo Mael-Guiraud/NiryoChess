@@ -66,6 +66,8 @@ def play_best_move(board, engine):
             place_func = arm_robot.place_position
         pos_from = arm_robot.get_pose_from_square(str(move)[:2])
         pos_to = arm_robot.get_pose_from_square(str(move)[-2:])
+        if '=' in move_san:
+            pos_to = arm_robot.get_pose_from_square(str(move)[-3:-1])
         
         if 'x' in move_san:
             piece = board.piece_at(move.to_square)
@@ -81,27 +83,82 @@ def play_best_move(board, engine):
                 params.global_state["dead_pieces"].x+0.04, params.global_state["dead_pieces"].y, params.global_state["dead_pieces"].z,
                 params.global_state["dead_pieces"].roll, params.global_state["dead_pieces"].pitch, params.global_state["dead_pieces"].yaw
             )
+        if '=' in move_san:
+            pick_func(pos_from)
+            place_func(params.global_state["dead_pieces"])
+            params.global_state["dead_pieces"] = PoseObject(
+                params.global_state["dead_pieces"].x+0.04, params.global_state["dead_pieces"].y, params.global_state["dead_pieces"].z,
+                params.global_state["dead_pieces"].roll, params.global_state["dead_pieces"].pitch, params.global_state["dead_pieces"].yaw
+            )
+            #Add the piece from the dead pieces
+            if not params.PROMOTION_RESERVE:
+                print("Please put the promoted piece on the board")
+            else:
+                if str(move[-1])=="q":
+                    pick_func(params.global_state["promotQ"])
+                    place_func(pos_to)
+                if str(move[-1])=="r":
+                    pick_func(params.global_state["promotR"])
+                    place_func(pos_to)
+                if str(move[-1])=="b":
+                    pick_func(params.global_state["promotB"])
+                    place_func(pos_to)
+                if str(move[-1])=="n":
+                    pick_func(params.global_state["promotN"])
+                    place_func(pos_to)
+
+        
         if str(move) == "e1g1":
+            if params.global_state["side"] == 0:
+                print("Error: White castling while black side")
+                exit()
             pick_func(arm_robot.get_pose_from_square("h1"))
             place_func(arm_robot.get_pose_from_square("f1"))
         if str(move) == "e1c1":
+            if params.global_state["side"] == 0:
+                print("Error: White castling while black side")
+                exit()
             pick_func(arm_robot.get_pose_from_square("a1"))
             place_func(arm_robot.get_pose_from_square("d1"))
 
+        if str(move) == "e8g8":
+            if params.global_state["side"] == 1:
+                print("Error: Black castling while white side")
+                exit()
+            pick_func(arm_robot.get_pose_from_square("h8"))
+            place_func(arm_robot.get_pose_from_square("f8"))
+        if str(move) == "e8c8":
+            if params.global_state["side"] == 1:
+                print("Error: Black castling while white side")
+                exit()
+            pick_func(arm_robot.get_pose_from_square("a8"))
+            place_func(arm_robot.get_pose_from_square("d8"))
+
         pick_func(pos_from)
         place_func(pos_to)
-        params.global_state["robot"].move(params.global_state["wait_white"])
+        params.global_state["robot"].move(params.global_state["wait_robot"])
     
     board.push(move)
     end_time = time.time()
+    if board.is_checkmate():
+        print("Checkmate ! ")
+        arm_robot.play_robot_sound("checkmate")
+        
+    if board.is_check():
+        print("Check ! ")
+        arm_robot.play_robot_sound("check")
+        
     params.global_state["time_white"] -= (end_time - start_time)
 
-    params.global_state["turn"] = chess.BLACK
+    params.global_state["turn"] = chess.BLACK if params.global_state["side"] == 1 else chess.WHITE 
+    
 
 def handle_human_move(board,x, y):
     
     params.global_state["selected_square"]
-    if params.global_state["turn"] == chess.WHITE:
+    if params.global_state["turn"] == chess.WHITE and params.global_state["side"] == 1:
+        return
+    if params.global_state["turn"] == chess.BLACK and params.global_state["side"] == 0:
         return
     if board.is_checkmate():
         print("Checkmate ! ")
@@ -110,17 +167,30 @@ def handle_human_move(board,x, y):
     col = x // params.SQ_SIZE
     row = y // params.SQ_SIZE
 
-    file = 7 - col
-    rank = row
+    file = 7 - col if params.global_state["side"] == 1 else  col
+    rank = row if params.global_state["side"] == 1 else  7- row
     square_id = chess.square(file, rank)
 
     if params.global_state["selected_square"] is None:
         piece = board.piece_at(square_id)
-        if piece and piece.color == chess.BLACK:
-            params.global_state["selected_square"] = square_id
+        if piece :
+            if params.global_state["side"] == 1 and piece.color == chess.BLACK:
+                params.global_state["selected_square"] = square_id
+            elif params.global_state["side"] == 0 and piece.color == chess.WHITE:
+                params.global_state["selected_square"] = square_id
 
     else:
         move = chess.Move(params.global_state["selected_square"], square_id)
+
+        
+        if move.promotion is None and board.piece_at(params.global_state["selected_square"]).piece_type == chess.PAWN:
+            if chess.square_rank(square_id) in [0, 7]: 
+                params.global_state["promot"] = 1
+                graphisms.draw_board(board, params.global_state["time_white"], params.global_state["time_black"])
+                
+                move = chess.Move(params.global_state["selected_square"], square_id, params.global_state["promotion_piece"] )  
+
+
         if move in board.legal_moves:
             start_time = time.time()
             print(f"Human plays : {board.san(move)}")
@@ -129,17 +199,20 @@ def handle_human_move(board,x, y):
 
             params.global_state["time_black"] -= (end_time - start_time)
             params.global_state["selected_square"] = None
-            params.global_state["turn"] = chess.WHITE
-
+            params.global_state["turn"] = chess.WHITE if params.global_state["side"] == 1 else chess.BLACK
         else:
-            print("Illegal move ! ")
+            print("Illegal move !")
             params.global_state["selected_square"] = None
 
 
 if __name__ == "__main__":
     if not params.SIMULATED:
         arm_robot.init_position()
-    configure_stockfish(graphisms.select_stockfish_level())
+    
+    level, side = graphisms.select_stockfish_level()
+    params.global_state["side"]=side
+    print(side)
+    configure_stockfish(level)
     params.global_state["turn"] = chess.WHITE
     params.global_state["time_white"] = params.TIME_WHITE
     params.global_state["time_black"] = params.TIME_BLACK
@@ -154,10 +227,9 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
     board = chess.Board()
     graphisms.draw_board(board, params.global_state["time_white"], params.global_state["time_black"])
-    play_best_move(board, engine)
+    if params.global_state["side"] == 1:
+        play_best_move(board, engine)
 
-
-    # Stockfish starts
     last_time = time.time()
 
     while running:
@@ -181,14 +253,19 @@ if __name__ == "__main__":
                     if y < params.BOARD_SIZE and x < params.BOARD_SIZE:
                         handle_human_move(board,x, y)
                         graphisms.draw_board(board, params.global_state["time_white"], params.global_state["time_black"])
-                        if params.global_state["turn"] == chess.WHITE and ( (not params.TIMERS) or params.global_state["time_white"] > 0):
+                        computer_plays = 0
+                        if params.global_state["side"] == 0 and params.global_state["turn"] == chess.BLACK:
+                            computer_plays = 1
+                        if params.global_state["side"] == 1 and params.global_state["turn"] == chess.WHITE:
+                            computer_plays = 1
+                        if computer_plays and ( (not params.TIMERS) or params.global_state["time_white"] > 0):
                             play_best_move(board, engine)
         graphisms.draw_board(board, params.global_state["time_white"], params.global_state["time_black"])
         if  params.TIMERS and params.global_state["time_white"] <= 0:
-            print("Time is up ! Human (black) wins.")
+            print("Time is up ! Black wins.")
             running = False
         elif params.TIMERS and params.global_state["time_black"] <= 0:
-            print("Time is up ! Stockfish (white) wins.")
+            print("Time is up ! White wins.")
             running = False
 
         

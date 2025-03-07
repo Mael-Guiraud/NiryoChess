@@ -15,7 +15,7 @@ INFO_HEIGHT = 100
 SIMULATED = 1
 
 #0 for no timers, 1 for timers
-TIMERS = 1
+TIMERS = 0
 
 #time (in seconds) for each player
 TIME_WHITE = 600
@@ -27,8 +27,12 @@ STOCKFISH_PATH = "/usr/games/stockfish"
 #path of the pieces images
 PIECE_PATH = logo_path = os.path.join(SCRIPT_DIR,"pieces_png")
 
+#Set to 1 if you have recorded the positions of the reserve pieces for promotion (named "promotQ", "promotR", "promotB", and "promotN").
+#Set to 0 otherwise (in this case, the player will have to manually place the robot's promoted piece on the board).
+PROMOTION_RESERVE = 0
 
-
+#Set to 1 if you want to play sounds (requires to have saved the sounds on the robot).
+SOUND_ON = 0
 
 #Don't touch this
 WIDTH, HEIGHT = BOARD_SIZE + 30, BOARD_SIZE + INFO_HEIGHT+30
