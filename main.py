@@ -142,11 +142,11 @@ def play_best_move(board, engine):
     end_time = time.time()
     if board.is_checkmate():
         print("Checkmate ! ")
-        arm_robot.play_robot_sound("checkmate")
+        arm_robot.play_robot_sound("checkmate.mp3")
         
     if board.is_check():
         print("Check ! ")
-        arm_robot.play_robot_sound("check")
+        arm_robot.play_robot_sound("check.mp3")
         
     params.global_state["time_white"] -= (end_time - start_time)
 

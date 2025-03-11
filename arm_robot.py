@@ -14,10 +14,11 @@ def init_position():
     params.global_state["h8"] = robot.get_pose_saved("H8")
     params.global_state["dead_pieces"] = robot.get_pose_saved("dead_pieces")
     params.global_state["wait_robot"] = robot.get_pose_saved("wait_robot")
-    params.global_state["promotQ"] = robot.get_pose_saved("promotQ")
-    params.global_state["promotR"] = robot.get_pose_saved("promotR")
-    params.global_state["promotB"] = robot.get_pose_saved("promotB")
-    params.global_state["promotN"] = robot.get_pose_saved("promotN")
+    if PROMOTION_RESERVE:
+        params.global_state["promotQ"] = robot.get_pose_saved("promotQ")
+        params.global_state["promotR"] = robot.get_pose_saved("promotR")
+        params.global_state["promotB"] = robot.get_pose_saved("promotB")
+        params.global_state["promotN"] = robot.get_pose_saved("promotN")
 
     params.global_state["square_height"] = abs(params.global_state["h8"].y - params.global_state["a1"].y) / 7
     params.global_state["square_width"] = abs(params.global_state["h8"].x - params.global_state["a1"].x) / 7

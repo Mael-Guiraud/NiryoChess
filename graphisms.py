@@ -19,7 +19,7 @@ def select_stockfish_level():
     root = tk.Tk()
     root.withdraw()  
 
-    arm_robot.play_robot_sound("welcome")
+    arm_robot.play_robot_sound("welcome.mp3")
     level = simpledialog.askinteger("Stockfish Level", "Choose level (1-20):", minvalue=1, maxvalue=20)
     if level is None:
         level = 10  
@@ -38,7 +38,7 @@ def select_stockfish_level():
         root.quit()  
     tk.Button(color_window, text="Play as White", command=lambda: set_color("white"), width=15).pack(pady=5)
     tk.Button(color_window, text="Play as Black", command=lambda: set_color("black"), width=15).pack(pady=5)
-    arm_robot.play_robot_sound("side_selection")
+    arm_robot.play_robot_sound("side_selection.mp3")
     color_window.grab_set()  
     root.mainloop()  
 
