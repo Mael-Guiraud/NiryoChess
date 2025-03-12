@@ -159,22 +159,25 @@ def play_best_move(board, engine):
             place_func(pos_to)
         except:
             print("Error during arm movement, please move the piece.")
-        params.global_state["robot"].move(params.global_state["wait_robot"])
+        
         
     board.push(move)
     end_time = time.time()
     if board.is_checkmate():
         print("Checkmate ! ")
-        arm_robot.play_robot_sound("checkmate.mp3")
+        if not params.SIMULATED:
+            arm_robot.play_robot_sound("checkmate.mp3")
         
     if board.is_check():
         print("Check ! ")
-        arm_robot.play_robot_sound("check.mp3")
+        if not params.SIMULATED:
+            arm_robot.play_robot_sound("check.mp3")
         
     params.global_state["time_white"] -= (end_time - start_time)
 
     params.global_state["turn"] = chess.BLACK if params.global_state["side"] == 1 else chess.WHITE 
-    arm_robot.wait_state()
+    if not params.SIMULATED:
+        arm_robot.wait_state()
 
 def handle_human_move(board,x, y):
     

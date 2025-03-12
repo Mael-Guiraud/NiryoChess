@@ -100,6 +100,6 @@ def get_pose_from_square(square):
     square_height = params.global_state["square_height"]
     col = ord(square[0]) - ord('a') 
     row = int(square[1]) - 1        
-    x = a1.x + row * square_width if params.global_state["side"] == 1 else a1.x - row * square_width
-    y = a1.y - col * square_height if params.global_state["side"] == 1 else a1.y + col * square_height
-    return PoseObject(x, y, a1.z, a1.roll, a1.pitch, a1.yaw)
+    x_off = row * square_width if params.global_state["side"] == 1 else a1.x - row * square_width
+    y_off = -col * square_height if params.global_state["side"] == 1 else a1.y + col * square_height
+    return a1.copy_with_offsets(x_offset=x_off, y_offset=y_off)
