@@ -14,7 +14,7 @@ def init_position():
     params.global_state["h8"] = robot.get_pose_saved("H8")
     params.global_state["dead_pieces"] = robot.get_pose_saved("dead_pieces")
     params.global_state["wait_robot"] = robot.get_pose_saved("wait_robot")
-    if PROMOTION_RESERVE:
+    if params.PROMOTION_RESERVE:
         params.global_state["promotQ"] = robot.get_pose_saved("promotQ")
         params.global_state["promotR"] = robot.get_pose_saved("promotR")
         params.global_state["promotB"] = robot.get_pose_saved("promotB")
@@ -23,7 +23,10 @@ def init_position():
     params.global_state["square_height"] = abs(params.global_state["h8"].y - params.global_state["a1"].y) / 7
     params.global_state["square_width"] = abs(params.global_state["h8"].x - params.global_state["a1"].x) / 7
     robot.move(params.global_state["wait_robot"])
-
+def wait_state():
+    robot =  params.global_state["robot"]
+    robot.clear_collision_detected()
+    robot.move(params.global_state["wait_robot"])
 def play_robot_sound(sound):
     if params.SOUND_ON:
         robot =  params.global_state["robot"]

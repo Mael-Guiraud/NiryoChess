@@ -77,67 +77,90 @@ def play_best_move(board, engine):
             else:
                 pick_func = arm_robot.pick_position
                 place_func = arm_robot.place_position
-            pick_func(pos_to)
-            place_func(params.global_state["dead_pieces"])
+            try:
+                pick_func(pos_to)
+                place_func(params.global_state["dead_pieces"])
+            except:
+                print("Error during arm movement, please move the piece.")
             params.global_state["dead_pieces"] = PoseObject(
                 params.global_state["dead_pieces"].x+0.04, params.global_state["dead_pieces"].y, params.global_state["dead_pieces"].z,
                 params.global_state["dead_pieces"].roll, params.global_state["dead_pieces"].pitch, params.global_state["dead_pieces"].yaw
             )
         if '=' in move_san:
-            pick_func(pos_from)
-            place_func(params.global_state["dead_pieces"])
+            try:
+                pick_func(pos_from)
+                place_func(params.global_state["dead_pieces"])
+            except: 
+                print("Error during arm movement, please move the piece.")
             params.global_state["dead_pieces"] = PoseObject(
                 params.global_state["dead_pieces"].x+0.04, params.global_state["dead_pieces"].y, params.global_state["dead_pieces"].z,
                 params.global_state["dead_pieces"].roll, params.global_state["dead_pieces"].pitch, params.global_state["dead_pieces"].yaw
             )
-            #Add the piece from the dead pieces
+            #Add the piece from the reserve pieces
             if not params.PROMOTION_RESERVE:
                 print("Please put the promoted piece on the board")
             else:
-                if str(move[-1])=="q":
-                    pick_func(params.global_state["promotQ"])
-                    place_func(pos_to)
-                if str(move[-1])=="r":
-                    pick_func(params.global_state["promotR"])
-                    place_func(pos_to)
-                if str(move[-1])=="b":
-                    pick_func(params.global_state["promotB"])
-                    place_func(pos_to)
-                if str(move[-1])=="n":
-                    pick_func(params.global_state["promotN"])
-                    place_func(pos_to)
+                try:
+                    if str(move[-1])=="q":
+                        pick_func(params.global_state["promotQ"])
+                        place_func(pos_to)
+                    if str(move[-1])=="r":
+                        pick_func(params.global_state["promotR"])
+                        place_func(pos_to)
+                    if str(move[-1])=="b":
+                        pick_func(params.global_state["promotB"])
+                        place_func(pos_to)
+                    if str(move[-1])=="n":
+                        pick_func(params.global_state["promotN"])
+                        place_func(pos_to)
+                except:
+                    print("Error during arm movement, please move the piece.")
 
         
         if str(move) == "e1g1":
             if params.global_state["side"] == 0:
                 print("Error: White castling while black side")
                 exit()
-            pick_func(arm_robot.get_pose_from_square("h1"))
-            place_func(arm_robot.get_pose_from_square("f1"))
+            try:
+                pick_func(arm_robot.get_pose_from_square("h1"))
+                place_func(arm_robot.get_pose_from_square("f1"))
+            except:
+                print("Error during arm movement, please move the piece.")
         if str(move) == "e1c1":
             if params.global_state["side"] == 0:
                 print("Error: White castling while black side")
                 exit()
-            pick_func(arm_robot.get_pose_from_square("a1"))
-            place_func(arm_robot.get_pose_from_square("d1"))
+            try:
+                pick_func(arm_robot.get_pose_from_square("a1"))
+                place_func(arm_robot.get_pose_from_square("d1"))
+            except:
+                print("Error during arm movement, please move the piece.")
 
         if str(move) == "e8g8":
             if params.global_state["side"] == 1:
                 print("Error: Black castling while white side")
                 exit()
-            pick_func(arm_robot.get_pose_from_square("h8"))
-            place_func(arm_robot.get_pose_from_square("f8"))
+            try:
+                pick_func(arm_robot.get_pose_from_square("h8"))
+                place_func(arm_robot.get_pose_from_square("f8"))
+            except:
+                print("Error during arm movement, please move the piece.")
         if str(move) == "e8c8":
             if params.global_state["side"] == 1:
                 print("Error: Black castling while white side")
                 exit()
-            pick_func(arm_robot.get_pose_from_square("a8"))
-            place_func(arm_robot.get_pose_from_square("d8"))
-
-        pick_func(pos_from)
-        place_func(pos_to)
+            try:
+                pick_func(arm_robot.get_pose_from_square("a8"))
+                place_func(arm_robot.get_pose_from_square("d8"))
+            except:
+                print("Error during arm movement, please move the piece.")
+        try:
+            pick_func(pos_from)
+            place_func(pos_to)
+        except:
+            print("Error during arm movement, please move the piece.")
         params.global_state["robot"].move(params.global_state["wait_robot"])
-    
+        
     board.push(move)
     end_time = time.time()
     if board.is_checkmate():
@@ -151,7 +174,7 @@ def play_best_move(board, engine):
     params.global_state["time_white"] -= (end_time - start_time)
 
     params.global_state["turn"] = chess.BLACK if params.global_state["side"] == 1 else chess.WHITE 
-    
+    arm_robot.wait_state()
 
 def handle_human_move(board,x, y):
     
